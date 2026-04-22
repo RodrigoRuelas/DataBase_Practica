@@ -78,3 +78,28 @@ CREATE TABLE MovimientoInventario (
     CONSTRAINT FK_Movimiento_Zona FOREIGN KEY (idZona) REFERENCES Zona(idZona),
     CONSTRAINT CHK_CantidadMovimiento CHECK (Cantidad > 0) -- Restriccion check: no puede haber movimientos negativos
 );
+
+-- Tabla Venta
+CREATE TABLE Venta (
+    idVenta INT IDENTITY(1,1) PRIMARY KEY,
+    numComprobante NVARCHAR(20) NOT NULL,
+    tipoComprobante NVARCHAR(50) NOT NULL,
+    fechaVenta DATETIME DEFAULT GETDATE(),
+    idCliente INT NOT NULL,
+    Subtotal DECIMAL(12, 2) NOT NULL,
+    IGV DECIMAL(12, 2) NOT NULL,
+    Descuento DECIMAL(12, 2) DEFAULT 0.00,
+    Total DECIMAL(12, 2) NOT NULL,
+    CONSTRAINT FK_Venta_Cliente FOREIGN KEY (idCliente) REFERENCES Cliente(idCliente)
+);
+
+-- Tabla DetalleVenta
+CREATE TABLE DetalleVenta (
+    idDetalleVenta INT IDENTITY(1,1) PRIMARY KEY,
+    idVenta INT NOT NULL,
+    idProducto INT NOT NULL,
+    Cantidad INT NOT NULL CHECK (Cantidad > 0),
+    PrecioUnitarioVenta DECIMAL(12, 2) NOT NULL,
+    CONSTRAINT FK_DetalleVenta_Venta FOREIGN KEY (idVenta) REFERENCES Venta(idVenta),
+    CONSTRAINT FK_DetalleVenta_Producto FOREIGN KEY (idProducto) REFERENCES Producto(idProducto)
+);
